@@ -1,10 +1,65 @@
-import React, { Component } from "react";
+import React, { useState, useEffect } from "react";
 import Form from "react-validation/build/form";
 import Input from "react-validation/build/input";
+import { useDispatch, useSelector } from "react-redux";
+import { loginUser, setLoggedIn } from "../redux/actions/authActions";
+import Axios from "axios";
+import setAuthToken from "../redux/utils/setAuthToken";
+import jwt_decode from "jwt-decode";
 
 
+function Login(props) {
 
-function login(props) {
+  const [state, setState] = useState({
+    email: "",
+    password: "",
+ });
+ const [errors, setErrors] = useState({});
+ const dispatch = useDispatch();
+
+ const isAuth = useSelector(state => state.auth.isAuthenticated);
+ // const isLoggedIn = useSelector(state => state.auth);
+
+ useEffect(() => {
+    setState({
+       email: "",
+       password: "",
+    });
+    if (isAuth) {
+       props.history.push("/dashboard");
+       dispatch(setLoggedIn(true));
+    }
+ }, [isAuth]);
+
+ const handleChange = async e => {
+    await setState({
+       ...state,
+       [e.target.name]: e.target.value,
+    });
+ };
+
+ const handleSubmit = e => {
+    e.preventDefault();
+    const userData = {
+       email: state.email,
+       password: state.password,
+    };
+
+    Axios.post("/api/users/login", userData)
+       .then(res => {
+          const { token } = res.data;
+          localStorage.setItem("jwtToken", token);
+
+          setAuthToken(true);
+
+          const decoded = jwt_decode(token);
+          dispatch(loginUser(decoded));
+          dispatch(setLoggedIn(true));
+       })
+       .catch(err => {
+          setErrors(err.response.data);
+       });
+ };
  
     return (
       <div className="col-md-12">
@@ -15,27 +70,42 @@ function login(props) {
             className="profile-img-card"
           />
 
-          <Form>
+          <Form onSubmit={handleSubmit}>
             <div className="form-group">
               <label htmlFor="username">Username</label>
               <Input
-                type="text"
-                className="form-control"
-                name="username"
+               className="form-control"
+                onChange={handleChange}
+                value={state.email}
+                name="email"
+                id="email"
+                type="email"
+                placeholder="Email"
               />
+              <p className="input-error">
+               {errors.email || errors.emailNotFound}
+            </p>
             </div>
 
             <div className="form-group">
               <label htmlFor="password">Password</label>
               <Input
-                type="password"
-                className="form-control"
-                name="password"
-              />
+               className="form-control"
+               onChange={handleChange}
+               value={state.password}
+               name="password"
+               id="password"
+               type="password"
+               autocomplete="new-password"
+               placeholder="Password"
+            />
+            <p className="input-error">
+               {errors.password || errors.passwordIncorrect}
+            </p>
             </div>
 
             <div className="form-group">
-              <button
+              <button type="submit"
                 className="btn btn-primary btn-block"
               >
                 <span>Login</span>
@@ -48,4 +118,4 @@ function login(props) {
     );
   }
 
-  export default login;
+  export default Login;

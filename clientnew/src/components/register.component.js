@@ -6,7 +6,7 @@ import Input from "react-validation/build/input";
 import Axios from "axios";
 
 
-function Register (props) {
+const Register = props => {
 
   const [state, setState] = useState({
     name: "",

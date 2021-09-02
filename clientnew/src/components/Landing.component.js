@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { setLoggedIn } from "../../redux/actions/authActions.js";
+import { setLoggedIn } from "../redux/actions/authActions.js";
 const Landing = ({ history }) => {
 	const dispatch = useDispatch();
 	const isAuth = useSelector(state => state.auth.isAuthenticated);

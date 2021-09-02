@@ -50,7 +50,7 @@ const App = () => {
     return (
      <div>
       <Navbar />
-      <Route exact path="/" component={Landing} />
+            <Route exact path="/" component={Landing} />
             <Route exact path="/login" component={Login} />
             <Route exact path="/register" component={Register} />
         <div className="container mt-3">

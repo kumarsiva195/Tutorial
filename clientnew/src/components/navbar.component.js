@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import { logoutUser, setLoggedIn } from "../../redux/actions/authActions.js";
+import { logoutUser, setLoggedIn } from "../redux/actions/authActions";
 
 const Navbar = () => {
 	const isLoggedIn = useSelector(state => state.auth.isLoggedIn);
@@ -36,8 +36,13 @@ return (
       </Link>
     </li>
   </div>
-
-
+  
+  {isLoggedIn ? (
+					<button className="button" onClick={handleLogout}>
+						Logout
+					</button>
+				) : (
+                    <React.Fragment>
     <div className="navbar-nav ml-auto">
       <li className="nav-item">
         <Link to={"/login"} className="nav-link">
@@ -51,6 +56,8 @@ return (
         </Link>
       </li>
     </div>
+    </React.Fragment>
+				)}
   {/* )} */}
 </nav>
 );
